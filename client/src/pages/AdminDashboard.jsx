@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authHeaders, clearToken, getToken } from "../auth.js";
 import { filterStudentsByCohort, isBalStudent } from "../cohort.js";
+import { getApiUrl } from "../api.js";
 import "./AdminDashboard.css";
 
 const yesNo = (v) => (v ? "Yes" : "No");
@@ -65,7 +66,7 @@ export default function AdminDashboard() {
   const fetchStudents = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/students", { headers: authHeaders() });
+      const res = await fetch(getApiUrl("/api/students"), { headers: authHeaders() });
       if (res.status === 401) {
         handleUnauthorized();
         return;
@@ -156,7 +157,7 @@ export default function AdminDashboard() {
     if (form.photo) fd.append("photo", form.photo);
 
     const isEdit = Boolean(editingId);
-    const url = isEdit ? `/api/students/${editingId}` : "/api/students";
+    const url = isEdit ? getApiUrl(`/api/students/${editingId}`) : getApiUrl("/api/students");
     const method = isEdit ? "PATCH" : "POST";
 
     try {
@@ -189,7 +190,7 @@ export default function AdminDashboard() {
     setDeletingId(id);
     setMessage({ type: "", text: "" });
     try {
-      const res = await fetch(`/api/students/${id}`, { method: "DELETE", headers: authHeaders() });
+      const res = await fetch(getApiUrl(`/api/students/${id}`), { method: "DELETE", headers: authHeaders() });
       if (res.status === 401) {
         handleUnauthorized();
         return;
