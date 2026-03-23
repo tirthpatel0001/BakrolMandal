@@ -14,17 +14,12 @@ const MONGODB_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/bakrol
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
 
 const app = express();
+
 const cors = require("cors");
 
 app.use(cors({
   origin: "*"
 }));
-app.use(
-  cors({
-    origin: CLIENT_URL,
-    credentials: true,
-  })
-);
 
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
