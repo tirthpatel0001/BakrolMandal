@@ -159,6 +159,12 @@ router.post("/", async (req, res) => {
 
     // Parse the date string (format: YYYY-MM-DD) - use UTC to avoid timezone issues
     const [year, month, day] = date.split('-').map(Number);
+    
+    // Validate date parsing
+    if (Number.isNaN(year) || Number.isNaN(month) || Number.isNaN(day)) {
+      return res.status(400).json({ message: "Invalid date format. Use YYYY-MM-DD" });
+    }
+
     const recordDate = new Date(Date.UTC(year, month - 1, day));
 
     // Validate records
@@ -178,6 +184,7 @@ router.post("/", async (req, res) => {
 
     const nextDay = new Date(Date.UTC(year, month - 1, day + 1));
 
+    // Use updateOne with explicit $set to ensure date is always set correctly
     const attendance = await Attendance.findOneAndUpdate(
       {
         cohort,
@@ -186,13 +193,23 @@ router.post("/", async (req, res) => {
           $lt: nextDay,
         },
       },
-      { records: validRecords },
+      { 
+        $set: {
+          date: recordDate,
+          cohort,
+          records: validRecords,
+        }
+      },
       { upsert: true, new: true }
     );
 
     res.json(attendance);
   } catch (err) {
-    console.error(err);
+    console.error("Error saving attendance:", err);
+    if (err.code === 11000) {
+      // Handle duplicate key error
+      return res.status(400).json({ message: "Duplicate attendance record. This date and cohort combination already exists." });
+    }
     res.status(500).json({ message: err.message || "Failed to save attendance" });
   }
 });

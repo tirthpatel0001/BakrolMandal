@@ -14,7 +14,23 @@ const attendanceSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Ensure unique date-cohort combination
-attendanceSchema.index({ date: 1, cohort: 1 }, { unique: true });
+// Ensure unique date-cohort combination with sparse index to ignore null dates
+attendanceSchema.index({ date: 1, cohort: 1 }, { unique: true, sparse: true });
+
+// Add validation to prevent null dates
+attendanceSchema.pre('save', function(next) {
+  if (!this.date) {
+    return next(new Error('Date is required'));
+  }
+  next();
+});
+
+attendanceSchema.pre('findOneAndUpdate', function(next) {
+  const update = this.getUpdate();
+  if (update.$set && !update.$set.date) {
+    return next(new Error('Date is required'));
+  }
+  next();
+});
 
 export default mongoose.model("Attendance", attendanceSchema);
