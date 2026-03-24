@@ -1,21 +1,7 @@
 import express from "express";
-import path from "path";
-import fs from "fs";
-import { fileURLToPath } from "url";
 import mongoose from "mongoose";
 import Student from "../models/Student.js";
-import { uploadStudentPhoto } from "../middleware/upload.js";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const uploadsRoot = path.join(__dirname, "..", "uploads");
-
-function removeUploadFile(relUrl) {
-  if (!relUrl || typeof relUrl !== "string" || !relUrl.startsWith("/uploads/")) return;
-  const name = relUrl.replace(/^\/uploads\//, "");
-  if (!name || name.includes("..")) return;
-  const full = path.join(uploadsRoot, name);
-  fs.unlink(full, () => {});
-}
+import { uploadStudentPhoto, deleteCloudinaryImage, getImageUrl } from "../middleware/cloudinary-upload.js";
 
 function parseStudentBody(body) {
   const {
@@ -65,13 +51,18 @@ router.get("/", async (_req, res) => {
 router.post("/", uploadStudentPhoto.single("photo"), async (req, res) => {
   try {
     const data = parseStudentBody(req.body);
+    
+    // Get image URL from Cloudinary (secure_url from multer-storage-cloudinary)
+    const photoUrl = getImageUrl(req.file);
+
     const student = await Student.create({
       ...data,
-      photo: req.file ? `/uploads/${req.file.filename}` : "",
+      photo: photoUrl,
     });
 
     res.status(201).json(student);
   } catch (err) {
+    console.error("Error creating student:", err);
     res.status(400).json({ message: err.message || "Failed to create student" });
   }
 });
@@ -90,13 +81,18 @@ router.patch("/:id", uploadStudentPhoto.single("photo"), async (req, res) => {
     Object.assign(student, data);
 
     if (req.file) {
-      removeUploadFile(student.photo);
-      student.photo = `/uploads/${req.file.filename}`;
+      // Delete old image from Cloudinary if it exists
+      if (student.photo) {
+        await deleteCloudinaryImage(student.photo);
+      }
+      // Set new image URL from Cloudinary
+      student.photo = getImageUrl(req.file);
     }
 
     await student.save();
     res.json(student);
   } catch (err) {
+    console.error("Error updating student:", err);
     res.status(400).json({ message: err.message || "Failed to update student" });
   }
 });
@@ -110,10 +106,16 @@ router.delete("/:id", async (req, res) => {
     if (!student) {
       return res.status(404).json({ message: "Student not found" });
     }
-    removeUploadFile(student.photo);
+
+    // Delete image from Cloudinary if it exists
+    if (student.photo) {
+      await deleteCloudinaryImage(student.photo);
+    }
+
     await student.deleteOne();
     res.json({ ok: true });
   } catch (err) {
+    console.error("Error deleting student:", err);
     res.status(400).json({ message: err.message || "Failed to delete student" });
   }
 });

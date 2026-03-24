@@ -31,7 +31,7 @@ app.use(
 
 // ✅ Middleware
 app.use(express.json());
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// Note: Images are stored on Cloudinary, not locally
 
 // ✅ Routes
 app.use("/api/auth", authRouter);
