@@ -355,7 +355,18 @@ export default function AdminDashboard() {
           ) : (
             <ul className="dash-students">
               {filteredStudents.map((s) => (
-                <li key={s._id} className="dash-student">
+                <li
+                  key={s._id}
+                  className="dash-student dash-student-clickable"
+                  onClick={() => navigate(`/student/${s._id}`)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      navigate(`/student/${s._id}`);
+                    }
+                  }}
+                >
                   <div className="dash-student-photo-wrap">
                     {s.photo ? (
                       <img src={s.photo} alt="" className="dash-student-photo" />
@@ -375,14 +386,24 @@ export default function AdminDashboard() {
                         </div>
                       </div>
                       <div className="dash-student-actions">
-                        <button type="button" className="dash-btn dash-btn-ghost dash-btn-sm" onClick={() => startEdit(s)}>
+                        <button
+                          type="button"
+                          className="dash-btn dash-btn-ghost dash-btn-sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            startEdit(s);
+                          }}
+                        >
                           Edit
                         </button>
                         <button
                           type="button"
                           className="dash-btn dash-btn-danger dash-btn-sm"
                           disabled={deletingId === s._id}
-                          onClick={() => handleDelete(s._id, s.name)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(s._id, s.name);
+                          }}
                         >
                           {deletingId === s._id ? "…" : "Delete"}
                         </button>

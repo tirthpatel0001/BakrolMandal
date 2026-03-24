@@ -48,6 +48,21 @@ router.get("/", async (_req, res) => {
   }
 });
 
+router.get("/:id", async (req, res) => {
+  try {
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      return res.status(400).json({ message: "Invalid student id" });
+    }
+    const student = await Student.findById(req.params.id);
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+    res.json(student);
+  } catch (err) {
+    res.status(500).json({ message: err.message || "Failed to fetch student" });
+  }
+});
+
 router.post("/", uploadStudentPhoto.single("photo"), async (req, res) => {
   try {
     const data = parseStudentBody(req.body);

@@ -1,0 +1,352 @@
+/* Student Detail Page Styles */
+
+.detail-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.detail-header {
+  max-width: 1200px;
+  margin: 0 auto 30px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.detail-back-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.detail-back-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateX(-4px);
+}
+
+.detail-title {
+  color: white;
+  font-size: 32px;
+  margin: 0;
+  flex: 1;
+}
+
+.detail-loading,
+.detail-error {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.detail-error {
+  color: #d32f2f;
+}
+
+.detail-loading {
+  color: #666;
+}
+
+.detail-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  align-items: start;
+}
+
+/* Photo Card */
+.detail-photo-card {
+  position: relative;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  aspect-ratio: 3/4;
+  display: flex;
+  align-items: flex-end;
+}
+
+.detail-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.detail-photo-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.detail-photo-placeholder-text {
+  font-size: 18px;
+  color: #999;
+  font-weight: 500;
+}
+
+.detail-photo-overlay {
+  position: relative;
+  z-index: 10;
+  background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.8) 100%);
+  width: 100%;
+  padding: 30px 20px 20px;
+  color: white;
+}
+
+.detail-student-name {
+  font-size: 28px;
+  margin: 0 0 15px 0;
+  font-weight: 700;
+}
+
+.detail-basic-info {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.detail-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.detail-badge-grade {
+  background: rgba(102, 126, 234, 0.4);
+  border-color: rgba(102, 126, 234, 0.6);
+}
+
+.detail-badge-school {
+  background: rgba(118, 75, 162, 0.4);
+  border-color: rgba(118, 75, 162, 0.6);
+}
+
+/* Content Section */
+.detail-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.detail-section {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.detail-section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 16px 0;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.detail-info-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.detail-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-field-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.detail-field-value {
+  font-size: 15px;
+  color: #333;
+  font-weight: 500;
+}
+
+/* Activities Grid */
+.detail-activities-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.detail-activity-card {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 10px;
+  border: 2px solid #e0e0e0;
+  transition: all 0.2s;
+}
+
+.detail-activity-card.active {
+  border-color: #4caf50;
+  background: rgba(76, 175, 80, 0.08);
+}
+
+.detail-activity-card.inactive {
+  border-color: #e0e0e0;
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.detail-activity-icon {
+  font-size: 24px;
+  font-weight: 700;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.detail-activity-card.active .detail-activity-icon {
+  background: rgba(76, 175, 80, 0.2);
+  color: #4caf50;
+}
+
+.detail-activity-card.inactive .detail-activity-icon {
+  background: rgba(0, 0, 0, 0.05);
+  color: #999;
+}
+
+.detail-activity-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.detail-activity-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.detail-activity-sub {
+  font-size: 12px;
+  color: #666;
+}
+
+/* Actions */
+.detail-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.detail-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.detail-btn-edit {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.detail-btn-edit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 900px) {
+  .detail-container {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-photo-card {
+    aspect-ratio: auto;
+    min-height: 400px;
+  }
+
+  .detail-title {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 600px) {
+  .detail-page {
+    padding: 12px;
+  }
+
+  .detail-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .detail-back-btn {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+
+  .detail-title {
+    font-size: 20px;
+  }
+
+  .detail-section {
+    padding: 16px;
+  }
+
+  .detail-activities-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-student-name {
+    font-size: 24px;
+  }
+
+  .detail-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-actions {
+    flex-direction: column;
+  }
+
+  .detail-btn {
+    width: 100%;
+  }
+}

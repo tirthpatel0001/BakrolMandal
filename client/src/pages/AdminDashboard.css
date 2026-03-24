@@ -571,6 +571,22 @@
   transform: translateY(-1px);
 }
 
+.dash-student-clickable {
+  cursor: pointer;
+}
+
+.dash-student-clickable:hover {
+  border-color: rgba(212, 175, 55, 0.35);
+  background: rgba(6, 8, 14, 0.7);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(92, 61, 158, 0.2);
+}
+
+.dash-student-clickable:focus-visible {
+  outline: 2px solid rgba(212, 175, 55, 0.6);
+  outline-offset: 2px;
+}
+
 .dash-student-photo-wrap {
   flex-shrink: 0;
 }
