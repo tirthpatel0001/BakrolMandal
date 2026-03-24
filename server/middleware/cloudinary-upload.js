@@ -61,7 +61,23 @@ export async function deleteCloudinaryImage(imageUrl) {
 
 // Helper to get image URL from multer result
 export function getImageUrl(file) {
-  if (!file) return "";
-  // CloudinaryStorage provides secure_url in the file object
-  return file.secure_url || "";
+  if (!file) {
+    console.warn("getImageUrl: No file provided");
+    return "";
+  }
+  
+  // CloudinaryStorage v4+ provides the URL in multiple possible places
+  const url = file.secure_url || file.url || file.path || "";
+  
+  if (!url) {
+    console.warn("getImageUrl: Could not extract URL from file object:", {
+      keys: Object.keys(file),
+      hasSecureUrl: "secure_url" in file,
+      filename: file.filename,
+    });
+  } else {
+    console.log("getImageUrl: Successfully extracted URL:", url.substring(0, 60) + "...");
+  }
+  
+  return url;
 }
