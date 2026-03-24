@@ -45,6 +45,7 @@ export default function AdminDashboard() {
   const [deletingId, setDeletingId] = useState(null);
   const [message, setMessage] = useState({ type: "", text: "" });
   const [editingId, setEditingId] = useState(null);
+  const [showForm, setShowForm] = useState(false);
 
   const [form, setForm] = useState(emptyForm);
 
@@ -130,6 +131,7 @@ export default function AdminDashboard() {
 
   function startEdit(s) {
     setEditingId(s._id);
+    setShowForm(true);
     setMessage({ type: "", text: "" });
     setForm({
       name: s.name || "",
@@ -149,6 +151,7 @@ export default function AdminDashboard() {
 
   function cancelEdit() {
     setEditingId(null);
+    setShowForm(false);
     setForm(emptyForm());
   }
 
@@ -196,6 +199,7 @@ export default function AdminDashboard() {
 
       setMessage({ type: "ok", text: isEdit ? "Student updated." : "Student added successfully." });
       setEditingId(null);
+      setShowForm(false);
       setForm(emptyForm());
       e.target.reset();
       fetchStudents();
@@ -257,127 +261,6 @@ export default function AdminDashboard() {
       </header>
 
       <main className="dash-main">
-        <section className="dash-panel dash-panel-form">
-          <div className="dash-panel-head dash-panel-head-row">
-            <div>
-              <h2>{editingId ? "Edit student" : "New student"}</h2>
-              <p className="dash-panel-desc">
-                {editingId ? "Update details or choose a new photo." : "Fill in details and optional photo."}
-              </p>
-            </div>
-            {editingId ? (
-              <button type="button" className="dash-btn dash-btn-ghost dash-btn-sm" onClick={cancelEdit}>
-                Cancel edit
-              </button>
-            ) : null}
-          </div>
-
-          {message.text ? (
-            <div className={`dash-banner dash-banner-${message.type === "ok" ? "ok" : "err"}`}>{message.text}</div>
-          ) : null}
-
-          <form onSubmit={handleSubmit} className="dash-form">
-            <div className="dash-form-grid">
-              <label className="dash-field">
-                <span className="dash-field-label">Full name</span>
-                <input
-                  required
-                  value={form.name}
-                  onChange={(e) => updateField("name", e.target.value)}
-                  placeholder="Student name"
-                />
-              </label>
-
-              <label className="dash-field">
-                <span className="dash-field-label">Photo</span>
-                <input
-                  key={editingId || "new"}
-                  type="file"
-                  accept="image/jpeg,image/png,image/gif,image/webp"
-                  className="dash-file"
-                  onChange={(e) => updateField("photo", e.target.files?.[0] || null)}
-                />
-              </label>
-
-              <label className="dash-field">
-                <span className="dash-field-label">Mobile</span>
-                <input
-                  required
-                  type="tel"
-                  value={form.mobile}
-                  onChange={(e) => updateField("mobile", e.target.value)}
-                  placeholder="Mobile number"
-                />
-              </label>
-
-              <label className="dash-field">
-                <span className="dash-field-label">Date of birth</span>
-                <input
-                  required
-                  type="date"
-                  value={form.dateOfBirth}
-                  onChange={(e) => updateField("dateOfBirth", e.target.value)}
-                />
-              </label>
-
-              <label className="dash-field">
-                <span className="dash-field-label">Grade</span>
-                <input
-                  required
-                  value={form.grade}
-                  onChange={(e) => updateField("grade", e.target.value)}
-                  placeholder="e.g. 5"
-                />
-              </label>
-
-              <label className="dash-field dash-field-span">
-                <span className="dash-field-label">School name</span>
-                <input
-                  required
-                  value={form.schoolName}
-                  onChange={(e) => updateField("schoolName", e.target.value)}
-                  placeholder="School"
-                />
-              </label>
-            </div>
-
-            <fieldset className="dash-fieldset">
-              <legend>Pooja</legend>
-              <div className="dash-toggle-row">
-                <ToggleChip name="pooja" checked={form.pooja === "yes"} onYes={() => updateField("pooja", "yes")} onNo={() => updateField("pooja", "no")} />
-              </div>
-              {form.pooja === "yes" ? (
-                <div className="dash-sub">
-                  <span className="dash-sub-label">Do they do pooja?</span>
-                  <div className="dash-toggle-row">
-                    <ToggleChip
-                      name="poojaTheyDo"
-                      checked={form.poojaTheyDo === "yes"}
-                      onYes={() => updateField("poojaTheyDo", "yes")}
-                      onNo={() => updateField("poojaTheyDo", "no")}
-                    />
-                  </div>
-                </div>
-              ) : null}
-            </fieldset>
-
-            <div className="dash-yesno-grid">
-              <YesNoGroup label="Lehgo Jabho" name="lehgoJabho" value={form.lehgoJabho} onChange={(v) => updateField("lehgoJabho", v)} />
-              <YesNoGroup label="Bal Prakash" name="balPrakash" value={form.balPrakash} onChange={(v) => updateField("balPrakash", v)} />
-              <YesNoGroup
-                label="Satsang Vihar exam"
-                name="satsangViharExam"
-                value={form.satsangViharExam}
-                onChange={(v) => updateField("satsangViharExam", v)}
-              />
-            </div>
-
-            <button type="submit" className="dash-btn dash-btn-primary" disabled={submitting}>
-              {submitting ? "Saving…" : editingId ? "Update student" : "Add student"}
-            </button>
-          </form>
-        </section>
-
         <section className="dash-panel dash-panel-list">
           <div className="dash-panel-head dash-panel-head-row">
             <div>
@@ -532,7 +415,147 @@ export default function AdminDashboard() {
               ))}
             </ul>
           )}
+
+          {!loading && (
+            <div className="dash-panel-footer">
+              <button
+                type="button"
+                className="dash-btn dash-btn-primary"
+                onClick={() => {
+                  setEditingId(null);
+                  setForm(emptyForm());
+                  setShowForm(!showForm);
+                  window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+                }}
+              >
+                {showForm ? "Cancel" : "+ Add Student"}
+              </button>
+            </div>
+          )}
         </section>
+
+        {showForm && (
+          <section className="dash-panel dash-panel-form">
+            <div className="dash-panel-head dash-panel-head-row">
+              <div>
+                <h2>{editingId ? "Edit student" : "New student"}</h2>
+                <p className="dash-panel-desc">
+                  {editingId ? "Update details or choose a new photo." : "Fill in details and optional photo."}
+                </p>
+              </div>
+              {editingId ? (
+                <button type="button" className="dash-btn dash-btn-ghost dash-btn-sm" onClick={cancelEdit}>
+                  Cancel edit
+                </button>
+              ) : null}
+            </div>
+
+            {message.text ? (
+              <div className={`dash-banner dash-banner-${message.type === "ok" ? "ok" : "err"}`}>{message.text}</div>
+            ) : null}
+
+            <form onSubmit={handleSubmit} className="dash-form">
+              <div className="dash-form-grid">
+                <label className="dash-field">
+                  <span className="dash-field-label">Full name</span>
+                  <input
+                    required
+                    value={form.name}
+                    onChange={(e) => updateField("name", e.target.value)}
+                    placeholder="Student name"
+                  />
+                </label>
+
+                <label className="dash-field">
+                  <span className="dash-field-label">Photo</span>
+                  <input
+                    key={editingId || "new"}
+                    type="file"
+                    accept="image/jpeg,image/png,image/gif,image/webp"
+                    className="dash-file"
+                    onChange={(e) => updateField("photo", e.target.files?.[0] || null)}
+                  />
+                </label>
+
+                <label className="dash-field">
+                  <span className="dash-field-label">Mobile</span>
+                  <input
+                    required
+                    type="tel"
+                    value={form.mobile}
+                    onChange={(e) => updateField("mobile", e.target.value)}
+                    placeholder="Mobile number"
+                  />
+                </label>
+
+                <label className="dash-field">
+                  <span className="dash-field-label">Date of birth</span>
+                  <input
+                    required
+                    type="date"
+                    value={form.dateOfBirth}
+                    onChange={(e) => updateField("dateOfBirth", e.target.value)}
+                  />
+                </label>
+
+                <label className="dash-field">
+                  <span className="dash-field-label">Grade</span>
+                  <input
+                    required
+                    value={form.grade}
+                    onChange={(e) => updateField("grade", e.target.value)}
+                    placeholder="e.g. 5"
+                  />
+                </label>
+
+                <label className="dash-field dash-field-span">
+                  <span className="dash-field-label">School name</span>
+                  <input
+                    required
+                    value={form.schoolName}
+                    onChange={(e) => updateField("schoolName", e.target.value)}
+                    placeholder="School"
+                  />
+                </label>
+              </div>
+
+              <fieldset className="dash-fieldset">
+                <legend>Pooja</legend>
+                <div className="dash-toggle-row">
+                  <ToggleChip name="pooja" checked={form.pooja === "yes"} onYes={() => updateField("pooja", "yes")} onNo={() => updateField("pooja", "no")} />
+                </div>
+                {form.pooja === "yes" ? (
+                  <div className="dash-sub">
+                    <span className="dash-sub-label">Do they do pooja?</span>
+                    <div className="dash-toggle-row">
+                      <ToggleChip
+                        name="poojaTheyDo"
+                        checked={form.poojaTheyDo === "yes"}
+                        onYes={() => updateField("poojaTheyDo", "yes")}
+                        onNo={() => updateField("poojaTheyDo", "no")}
+                      />
+                    </div>
+                  </div>
+                ) : null}
+              </fieldset>
+
+              <div className="dash-yesno-grid">
+                <YesNoGroup label="Lehgo Jabho" name="lehgoJabho" value={form.lehgoJabho} onChange={(v) => updateField("lehgoJabho", v)} />
+                <YesNoGroup label="Bal Prakash" name="balPrakash" value={form.balPrakash} onChange={(v) => updateField("balPrakash", v)} />
+                <YesNoGroup
+                  label="Satsang Vihar exam"
+                  name="satsangViharExam"
+                  value={form.satsangViharExam}
+                  onChange={(v) => updateField("satsangViharExam", v)}
+                />
+              </div>
+
+              <button type="submit" className="dash-btn dash-btn-primary" disabled={submitting}>
+                {submitting ? "Saving…" : editingId ? "Update student" : "Add student"}
+              </button>
+            </form>
+          </section>
+        )}
       </main>
     </div>
   );
