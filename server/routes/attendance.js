@@ -96,10 +96,10 @@ router.get("/latest/:studentId", async (req, res) => {
   }
 });
 
-// GET /api/attendance/range - Get attendance records within a date range
+// GET /api/attendance/range - Get attendance records within a date range or for a specific date
 router.get("/range", async (req, res) => {
   try {
-    const { startDate, endDate, cohort } = req.query;
+    const { startDate, endDate, date, cohort } = req.query;
 
     let query = {};
 
@@ -108,17 +108,28 @@ router.get("/range", async (req, res) => {
       query.cohort = cohort;
     }
 
-    // Add date range filter if provided
-    if (startDate || endDate) {
+    // Add date filter
+    if (date || startDate || endDate) {
       query.date = {};
-      if (startDate) {
-        const [year, month, day] = startDate.split('-').map(Number);
-        query.date.$gte = new Date(Date.UTC(year, month - 1, day));
-      }
-      if (endDate) {
-        const [year, month, day] = endDate.split('-').map(Number);
-        const nextDay = new Date(Date.UTC(year, month - 1, day + 1));
-        query.date.$lt = nextDay;
+      
+      // If single date is provided, search for that exact date
+      if (date) {
+        const [year, month, day] = date.split('-').map(Number);
+        const startOfDay = new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
+        const endOfDay = new Date(Date.UTC(year, month - 1, day + 1, 0, 0, 0, 0));
+        query.date.$gte = startOfDay;
+        query.date.$lt = endOfDay;
+      } else {
+        // Handle date range if start/end dates provided
+        if (startDate) {
+          const [year, month, day] = startDate.split('-').map(Number);
+          query.date.$gte = new Date(Date.UTC(year, month - 1, day));
+        }
+        if (endDate) {
+          const [year, month, day] = endDate.split('-').map(Number);
+          const nextDay = new Date(Date.UTC(year, month - 1, day + 1));
+          query.date.$lt = nextDay;
+        }
       }
     }
 

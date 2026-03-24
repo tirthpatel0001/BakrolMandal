@@ -524,30 +524,3 @@
     width: 100%;
   }
 }
-    align-items: flex-start;
-  }
-
-  .attendance-buttons {
-    width: 100%;
-  }
-
-  .status-btn {
-    flex: 1;
-  }
-
-  .view-attendance-section {
-    grid-template-columns: 1fr;
-  }
-
-  .date-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-
-  .detail-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-}

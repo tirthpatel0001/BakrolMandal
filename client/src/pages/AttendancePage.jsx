@@ -42,8 +42,7 @@ export default function AttendancePage() {
   const [historyDetails, setHistoryDetails] = useState(null);
 
   // Search and filter for past attendance
-  const [searchStartDate, setSearchStartDate] = useState("");
-  const [searchEndDate, setSearchEndDate] = useState("");
+  const [searchDate, setSearchDate] = useState("");
   const [pastAttendanceLoading, setPastAttendanceLoading] = useState(false);
 
   const filteredStudents = useMemo(
@@ -77,7 +76,10 @@ export default function AttendancePage() {
         getApiUrl(`/api/attendance?date=${selectedDate}&cohort=${cohortFilter}`),
         { headers: authHeaders() }
       );
-      if (!res.ok) throw new Error("Failed to load attendance");
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.message || `Failed to load attendance (${res.status})`);
+      }
       const data = await res.json();
 
       const records = {};
@@ -88,6 +90,7 @@ export default function AttendancePage() {
       }
       setAttendanceRecords(records);
     } catch (e) {
+      console.error("Fetch attendance error:", e);
       setMessage({ type: "error", text: e.message });
     }
   }, [selectedDate, cohortFilter]);
@@ -104,8 +107,7 @@ export default function AttendancePage() {
     try {
       // Build query string
       const params = new URLSearchParams();
-      if (searchStartDate) params.append("startDate", searchStartDate);
-      if (searchEndDate) params.append("endDate", searchEndDate);
+      if (searchDate) params.append("date", searchDate);
       params.append("cohort", cohortFilter);
 
       const res = await fetch(getApiUrl(`/api/attendance/range?${params.toString()}`), {
@@ -121,13 +123,13 @@ export default function AttendancePage() {
     } finally {
       setPastAttendanceLoading(false);
     }
-  }, [cohortFilter, searchStartDate, searchEndDate]);
+  }, [cohortFilter, searchDate]);
 
   useEffect(() => {
     if (viewMode === "view") {
       fetchPastAttendance();
     }
-  }, [viewMode, cohortFilter, searchStartDate, searchEndDate, fetchPastAttendance]);
+  }, [viewMode, cohortFilter, searchDate, fetchPastAttendance]);
 
   // Update attendance status for a student
   const handleAttendanceChange = (studentId, status) => {
@@ -166,10 +168,15 @@ export default function AttendancePage() {
         }),
       });
 
-      if (!res.ok) throw new Error("Failed to save attendance");
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.message || `Failed to save attendance (${res.status})`);
+      }
+      const result = await res.json();
       setMessage({ type: "success", text: "Attendance saved successfully!" });
       setTimeout(() => setMessage({ type: "", text: "" }), 3000);
     } catch (e) {
+      console.error("Save attendance error:", e);
       setMessage({ type: "error", text: e.message });
     } finally {
       setSubmitting(false);
@@ -321,28 +328,18 @@ export default function AttendancePage() {
               </div>
 
               <div className="control-group">
-                <label>From Date:</label>
+                <label>Search Date:</label>
                 <input
                   type="date"
-                  value={searchStartDate}
-                  onChange={(e) => setSearchStartDate(e.target.value)}
-                />
-              </div>
-
-              <div className="control-group">
-                <label>To Date:</label>
-                <input
-                  type="date"
-                  value={searchEndDate}
-                  onChange={(e) => setSearchEndDate(e.target.value)}
+                  value={searchDate}
+                  onChange={(e) => setSearchDate(e.target.value)}
                 />
               </div>
 
               <button
                 className="clear-filters-btn"
                 onClick={() => {
-                  setSearchStartDate("");
-                  setSearchEndDate("");
+                  setSearchDate("");
                 }}
               >
                 Clear Filters
