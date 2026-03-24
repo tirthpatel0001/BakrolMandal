@@ -1,0 +1,400 @@
+/* Attendance Management Component Styles */
+
+.attendance-management-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+}
+
+.attendance-header {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.attendance-header h1 {
+  font-size: 28px;
+  color: #333;
+  margin: 0 0 10px 0;
+  font-weight: 600;
+}
+
+.attendance-header .subtitle {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+/* Table Wrapper */
+.table-wrapper {
+  overflow-x: auto;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+/* Table Styles */
+.attendance-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.attendance-table thead {
+  background-color: #2c3e50;
+  color: white;
+  font-weight: 600;
+}
+
+.attendance-table thead tr th {
+  padding: 16px;
+  text-align: left;
+  border-bottom: 2px solid #34495e;
+  font-weight: 600;
+}
+
+.attendance-table tbody tr {
+  border-bottom: 1px solid #ecf0f1;
+  transition: background-color 0.2s ease;
+}
+
+.attendance-table tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+.attendance-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.attendance-table tbody td {
+  padding: 16px;
+  vertical-align: middle;
+}
+
+/* Column Widths */
+.col-name {
+  width: 30%;
+}
+
+.col-phone {
+  width: 20%;
+}
+
+.col-status {
+  width: 30%;
+}
+
+.col-notify {
+  width: 20%;
+}
+
+.student-name {
+  font-weight: 500;
+  color: #2c3e50;
+  display: block;
+}
+
+.phone-number {
+  color: #7f8c8d;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+}
+
+/* Button Group Styles */
+.button-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.status-button {
+  padding: 8px 16px;
+  border: 2px solid #bdc3c7;
+  background-color: #ecf0f1;
+  color: #2c3e50;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  min-width: 80px;
+  text-align: center;
+}
+
+.status-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.status-button.present.active {
+  background-color: #27ae60;
+  color: white;
+  border-color: #229954;
+  box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+}
+
+.status-button.present:not(.active) {
+  color: #27ae60;
+  border-color: #27ae60;
+}
+
+.status-button.present:not(.active):hover {
+  background-color: #e8f8f0;
+}
+
+.status-button.absent.active {
+  background-color: #e74c3c;
+  color: white;
+  border-color: #c0392b;
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+}
+
+.status-button.absent:not(.active) {
+  color: #e74c3c;
+  border-color: #e74c3c;
+}
+
+.status-button.absent:not(.active):hover {
+  background-color: #fadcd9;
+}
+
+/* WhatsApp Button Styles */
+.whatsapp-button {
+  padding: 8px 16px;
+  background-color: #25d366;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  min-width: 90px;
+  justify-content: center;
+}
+
+.whatsapp-icon {
+  font-size: 16px;
+}
+
+.whatsapp-button:hover:not(:disabled) {
+  background-color: #1ebd56;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+}
+
+.whatsapp-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Disabled state */
+.whatsapp-button.disabled,
+.whatsapp-button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+}
+
+.whatsapp-button.disabled:hover,
+.whatsapp-button:disabled:hover {
+  background-color: #bdc3c7;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Info Section */
+.info-section {
+  margin-top: 20px;
+}
+
+.info-card {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  border-left: 4px solid #3498db;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.info-card h3 {
+  margin: 0 0 12px 0;
+  color: #2c3e50;
+  font-size: 16px;
+}
+
+.info-card ul {
+  margin: 0;
+  padding-left: 20px;
+  color: #555;
+}
+
+.info-card li {
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+  .attendance-management-container {
+    padding: 15px;
+  }
+
+  .attendance-table tbody td {
+    padding: 12px;
+  }
+
+  .attendance-table thead tr th {
+    padding: 12px;
+  }
+
+  .col-name {
+    width: 25%;
+  }
+
+  .col-phone {
+    width: 20%;
+  }
+
+  .col-status {
+    width: 35%;
+  }
+
+  .col-notify {
+    width: 20%;
+  }
+}
+
+@media (max-width: 768px) {
+  .attendance-management-container {
+    padding: 10px;
+  }
+
+  .attendance-header h1 {
+    font-size: 22px;
+  }
+
+  .table-wrapper {
+    border-radius: 4px;
+  }
+
+  .attendance-table {
+    font-size: 12px;
+  }
+
+  .attendance-table tbody td,
+  .attendance-table thead tr th {
+    padding: 10px 6px;
+  }
+
+  .col-name {
+    width: 30%;
+  }
+
+  .col-phone {
+    width: 18%;
+  }
+
+  .col-status {
+    width: 32%;
+  }
+
+  .col-notify {
+    width: 20%;
+  }
+
+  .status-button {
+    padding: 6px 10px;
+    font-size: 12px;
+    min-width: 70px;
+  }
+
+  .whatsapp-button {
+    padding: 6px 10px;
+    font-size: 12px;
+    min-width: 80px;
+  }
+
+  .phone-number {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .attendance-management-container {
+    padding: 8px;
+  }
+
+  .attendance-header h1 {
+    font-size: 18px;
+  }
+
+  .attendance-table {
+    font-size: 11px;
+  }
+
+  .attendance-table tbody td,
+  .attendance-table thead tr th {
+    padding: 8px 4px;
+  }
+
+  .col-name {
+    width: 35%;
+  }
+
+  .col-phone {
+    width: 20%;
+    font-size: 9px;
+  }
+
+  .col-status {
+    width: 27%;
+  }
+
+  .col-notify {
+    width: 18%;
+  }
+
+  .button-group {
+    gap: 4px;
+  }
+
+  .status-button {
+    padding: 4px 8px;
+    font-size: 11px;
+    min-width: 55px;
+  }
+
+  .whatsapp-button {
+    padding: 4px 6px;
+    font-size: 10px;
+    min-width: 65px;
+    gap: 3px;
+  }
+
+  .whatsapp-icon {
+    font-size: 14px;
+  }
+
+  .phone-number {
+    font-size: 10px;
+  }
+
+  .student-name {
+    font-size: 12px;
+  }
+
+  .info-card h3 {
+    font-size: 14px;
+  }
+
+  .info-card ul,
+  .info-card li {
+    font-size: 12px;
+  }
+}
