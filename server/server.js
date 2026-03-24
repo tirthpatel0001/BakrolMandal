@@ -7,6 +7,7 @@ import { fileURLToPath } from "url";
 
 import studentsRouter from "./routes/students.js";
 import authRouter from "./routes/auth.js";
+import attendanceRouter from "./routes/attendance.js";
 import { requireAuth } from "./middleware/auth.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -35,6 +36,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // ✅ Routes
 app.use("/api/auth", authRouter);
 app.use("/api/students", requireAuth, studentsRouter);
+app.use("/api/attendance", requireAuth, attendanceRouter);
 
 // ✅ Test route
 app.get("/api/health", (_req, res) => {

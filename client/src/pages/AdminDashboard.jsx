@@ -38,6 +38,7 @@ export default function AdminDashboard() {
   const [username, setUsername] = useState("");
 
   const [students, setStudents] = useState([]);
+  const [lastAttendance, setLastAttendance] = useState({}); // Track last attendance per student
   const [cohortFilter, setCohortFilter] = useState("all");
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -72,7 +73,27 @@ export default function AdminDashboard() {
         return;
       }
       if (!res.ok) throw new Error("Failed to load students");
-      setStudents(await res.json());
+      const studentsList = await res.json();
+      setStudents(studentsList);
+
+      // Fetch last attendance for each student
+      const attendanceMap = {};
+      for (const student of studentsList) {
+        try {
+          const attendRes = await fetch(getApiUrl(`/api/attendance/latest/${student._id}`), {
+            headers: authHeaders(),
+          });
+          if (attendRes.ok) {
+            const attendData = await attendRes.json();
+            if (attendData) {
+              attendanceMap[student._id] = attendData;
+            }
+          }
+        } catch (e) {
+          // Silently fail for individual attendance fetches
+        }
+      }
+      setLastAttendance(attendanceMap);
     } catch (e) {
       setMessage({ type: "error", text: e.message });
     } finally {
@@ -223,6 +244,9 @@ export default function AdminDashboard() {
             <span className="dash-user-dot" />
             {username || "Admin"}
           </span>
+          <button type="button" className="dash-btn dash-btn-primary" onClick={() => navigate("/attendance")}>
+            📋 Attendance
+          </button>
           <button type="button" className="dash-btn dash-btn-ghost" onClick={() => fetchStudents()} disabled={loading}>
             Refresh list
           </button>
@@ -497,6 +521,11 @@ export default function AdminDashboard() {
                       <Tag label="Lehgo Jabho" yes={s.lehgoJabho} />
                       <Tag label="Bal Prakash" yes={s.balPrakash} />
                       <Tag label="Satsang Vihar" yes={s.satsangViharExam} />
+                      {lastAttendance[s._id] && (
+                        <span className={`dash-tag dash-tag-attendance ${lastAttendance[s._id].status}`}>
+                          <strong>Last Sabha:</strong> {lastAttendance[s._id].status === "present" ? "✓ Present" : "✗ Absent"}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </li>

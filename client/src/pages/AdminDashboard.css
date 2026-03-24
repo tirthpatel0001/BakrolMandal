@@ -706,3 +706,21 @@
 .dash-tag-info {
   color: rgba(240, 242, 248, 0.72);
 }
+
+.dash-tag-attendance {
+  border-color: rgba(59, 130, 246, 0.3);
+  background: rgba(59, 130, 246, 0.08);
+  color: #60a5fa;
+}
+
+.dash-tag-attendance.present {
+  border-color: rgba(34, 197, 94, 0.3);
+  background: rgba(34, 197, 94, 0.08);
+  color: #86efac;
+}
+
+.dash-tag-attendance.absent {
+  border-color: rgba(248, 113, 113, 0.3);
+  background: rgba(248, 113, 113, 0.08);
+  color: #fca5a5;
+}
