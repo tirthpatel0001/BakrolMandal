@@ -41,6 +41,11 @@ export default function AttendancePage() {
   const [selectedHistoryDate, setSelectedHistoryDate] = useState(null);
   const [historyDetails, setHistoryDetails] = useState(null);
 
+  // Search and filter for past attendance
+  const [searchStartDate, setSearchStartDate] = useState("");
+  const [searchEndDate, setSearchEndDate] = useState("");
+  const [pastAttendanceLoading, setPastAttendanceLoading] = useState(false);
+
   const filteredStudents = useMemo(
     () => filterStudentsByCohort(students, cohortFilter),
     [students, cohortFilter]
@@ -95,27 +100,34 @@ export default function AttendancePage() {
 
   // Fetch past attendance dates
   const fetchPastAttendance = useCallback(async () => {
+    setPastAttendanceLoading(true);
     try {
-      const res = await fetch(getApiUrl("/api/attendance/history?limit=5"), {
+      // Build query string
+      const params = new URLSearchParams();
+      if (searchStartDate) params.append("startDate", searchStartDate);
+      if (searchEndDate) params.append("endDate", searchEndDate);
+      params.append("cohort", cohortFilter);
+
+      const res = await fetch(getApiUrl(`/api/attendance/range?${params.toString()}`), {
         headers: authHeaders(),
       });
       if (!res.ok) throw new Error("Failed to load past attendance");
       const data = await res.json();
-      // Filter by current cohort
-      const filtered = data.filter((record) => record.cohort === cohortFilter);
-      setPastAttendance(filtered);
+      setPastAttendance(data);
       setSelectedHistoryDate(null);
       setHistoryDetails(null);
     } catch (e) {
       setMessage({ type: "error", text: e.message });
+    } finally {
+      setPastAttendanceLoading(false);
     }
-  }, [cohortFilter]);
+  }, [cohortFilter, searchStartDate, searchEndDate]);
 
   useEffect(() => {
     if (viewMode === "view") {
       fetchPastAttendance();
     }
-  }, [viewMode, cohortFilter, fetchPastAttendance]);
+  }, [viewMode, cohortFilter, searchStartDate, searchEndDate, fetchPastAttendance]);
 
   // Update attendance status for a student
   const handleAttendanceChange = (studentId, status) => {
@@ -297,32 +309,77 @@ export default function AttendancePage() {
       {/* View Past Attendance Mode */}
       {viewMode === "view" && (
         <div className="view-attendance-section">
-          <div className="past-dates">
-            <h3>Last 5 Attendance Dates</h3>
-            <div className="dates-list">
-              {pastAttendance.length === 0 ? (
-                <p className="no-data">No attendance records found</p>
-              ) : (
-                pastAttendance.map((record) => (
-                  <div key={`${record.date}-${record.cohort}`} className="date-item">
-                    <div className="date-info">
-                      <p className="date">{formatDate(record.date)}</p>
-                      <p className="cohort-badge">{record.cohort}</p>
-                      <p className="count">
-                        {record.records.filter((r) => r.status === "present").length} /
-                        {record.records.length} Present
-                      </p>
-                    </div>
-                    <button
-                      className="view-details-btn"
-                      onClick={() => handleViewHistoryDetails(record)}
-                    >
-                      View Details
-                    </button>
-                  </div>
-                ))
-              )}
+          <div className="search-filters">
+            <h3>Search & Filter</h3>
+            <div className="filter-controls">
+              <div className="control-group">
+                <label>Cohort:</label>
+                <select value={cohortFilter} onChange={(e) => setCohortFilter(e.target.value)}>
+                  <option value="bal">Bal (Grade 5-9)</option>
+                  <option value="shishu">Shishu (Other Grades)</option>
+                </select>
+              </div>
+
+              <div className="control-group">
+                <label>From Date:</label>
+                <input
+                  type="date"
+                  value={searchStartDate}
+                  onChange={(e) => setSearchStartDate(e.target.value)}
+                />
+              </div>
+
+              <div className="control-group">
+                <label>To Date:</label>
+                <input
+                  type="date"
+                  value={searchEndDate}
+                  onChange={(e) => setSearchEndDate(e.target.value)}
+                />
+              </div>
+
+              <button
+                className="clear-filters-btn"
+                onClick={() => {
+                  setSearchStartDate("");
+                  setSearchEndDate("");
+                }}
+              >
+                Clear Filters
+              </button>
             </div>
+          </div>
+
+          <div className="past-dates">
+            <h3>Attendance Records</h3>
+            {pastAttendanceLoading ? (
+              <p className="loading">Loading records...</p>
+            ) : (
+              <div className="dates-list">
+                {pastAttendance.length === 0 ? (
+                  <p className="no-data">No attendance records found</p>
+                ) : (
+                  pastAttendance.map((record) => (
+                    <div key={`${record.date}-${record.cohort}`} className="date-item">
+                      <div className="date-info">
+                        <p className="date">{formatDate(record.date)}</p>
+                        <p className="cohort-badge">{record.cohort}</p>
+                        <p className="count">
+                          {record.records.filter((r) => r.status === "present").length} /
+                          {record.records.length} Present
+                        </p>
+                      </div>
+                      <button
+                        className="view-details-btn"
+                        onClick={() => handleViewHistoryDetails(record)}
+                      >
+                        View Details
+                      </button>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
           </div>
 
           {/* History Details */}

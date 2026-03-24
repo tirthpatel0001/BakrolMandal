@@ -96,6 +96,43 @@ router.get("/latest/:studentId", async (req, res) => {
   }
 });
 
+// GET /api/attendance/range - Get attendance records within a date range
+router.get("/range", async (req, res) => {
+  try {
+    const { startDate, endDate, cohort } = req.query;
+
+    let query = {};
+
+    // Add cohort filter if provided
+    if (cohort && ["bal", "shishu"].includes(cohort)) {
+      query.cohort = cohort;
+    }
+
+    // Add date range filter if provided
+    if (startDate || endDate) {
+      query.date = {};
+      if (startDate) {
+        const [year, month, day] = startDate.split('-').map(Number);
+        query.date.$gte = new Date(Date.UTC(year, month - 1, day));
+      }
+      if (endDate) {
+        const [year, month, day] = endDate.split('-').map(Number);
+        const nextDay = new Date(Date.UTC(year, month - 1, day + 1));
+        query.date.$lt = nextDay;
+      }
+    }
+
+    const records = await Attendance.find(query)
+      .sort({ date: -1 })
+      .lean();
+
+    res.json(records);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: err.message || "Failed to fetch attendance records" });
+  }
+});
+
 // POST /api/attendance - Create or update attendance record
 router.post("/", async (req, res) => {
   try {
@@ -109,9 +146,9 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ message: "Invalid cohort. Must be 'bal' or 'shishu'" });
     }
 
-    // Parse the date string (format: YYYY-MM-DD)
+    // Parse the date string (format: YYYY-MM-DD) - use UTC to avoid timezone issues
     const [year, month, day] = date.split('-').map(Number);
-    const recordDate = new Date(year, month - 1, day);
+    const recordDate = new Date(Date.UTC(year, month - 1, day));
 
     // Validate records
     const validRecords = [];
@@ -128,7 +165,7 @@ router.post("/", async (req, res) => {
       });
     }
 
-    const nextDay = new Date(year, month - 1, day + 1);
+    const nextDay = new Date(Date.UTC(year, month - 1, day + 1));
 
     const attendance = await Attendance.findOneAndUpdate(
       {
@@ -162,10 +199,10 @@ router.get("/", async (req, res) => {
       return res.status(400).json({ message: "Invalid cohort" });
     }
 
-    // Parse the date string (format: YYYY-MM-DD)
+    // Parse the date string (format: YYYY-MM-DD) - use UTC to avoid timezone issues
     const [year, month, day] = date.split('-').map(Number);
-    const recordDate = new Date(year, month - 1, day);
-    const nextDay = new Date(year, month - 1, day + 1);
+    const recordDate = new Date(Date.UTC(year, month - 1, day));
+    const nextDay = new Date(Date.UTC(year, month - 1, day + 1));
 
     const attendance = await Attendance.findOne({
       cohort,
